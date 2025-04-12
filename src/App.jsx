@@ -5,6 +5,8 @@ import LandingPage from "./Components/LandingPage/LandingPage";
 import Menu from "./Components/MenuPage/menu";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
+import AdminPage from "./Components/AdminPage/AdminPage";
+import Login from "./Components/AdminPage/LogIn";
 
 const App = () => {
   const pageSelected = useSelector((state) => state).Page.page;
@@ -22,6 +24,8 @@ const App = () => {
       <Routes>
         <Route path={"/"} element={<LandingPage />} />
         <Route path={"/menu"} element={<Menu />} />
+        <Route path={"/admin"} element={<AdminPage />} />
+        <Route path={"/login"} element={<Login />} />
       </Routes>
     </>
   );

@@ -6,33 +6,22 @@ const Menu = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const fetchData = () => {
-      const url = `${supabase.supabaseUrl}/rest/v1/Menu`;
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("Menu")
+        .select("*")
+        .eq("visible", true);
 
-      fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: supabase.supabaseKey,
-          Authorization: `Bearer ${supabase.supabaseKey}`,
-        },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Errore nella richiesta: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then((items) => {
-          setData(items);
-        })
-        .catch((error) => {
-          console.error("Errore nel recupero dei dati:", error.message);
-        });
+      if (error) {
+        console.error("Errore nel caricamento del menu:", error.message);
+      } else {
+        setData(data);
+      }
     };
 
     fetchData();
   }, []);
+
   useEffect(() => {
     console.log(data);
     // eslint-disable-next-line react-hooks/exhaustive-deps
