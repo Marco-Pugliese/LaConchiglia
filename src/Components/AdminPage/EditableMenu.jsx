@@ -1,190 +1,217 @@
+// import { useEffect, useState } from "react";
+// import supabase from "../../supabaseClient";
+// import EditableSingleDish from "./EditableSingleDish";
+// import { Button, Modal } from "react-bootstrap";
+// import CreateDishForm from "./CreateDishForm";
+
+// const MenuEditable = () => {
+//   const [data, setData] = useState([]);
+
+//   useEffect(() => {}, []);
+//   // Funzione per caricare i piatti dal DB
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const { data, error } = await supabase.from("Menu").select("*");
+
+//       if (error) {
+//         console.error("Errore nel caricamento del menu:", error.message);
+//       } else {
+//         setData(data);
+//       }
+//     };
+
+//     fetchData();
+//   }, [data]);
+
+//   const toggleVisibility = async (id, currentVisibility) => {
+//     const { error } = await supabase
+//       .from("Menu")
+//       .update({ visible: !currentVisibility })
+//       .eq("id", id);
+
+//     if (error) {
+//       console.error(
+//         "Errore nell'aggiornamento della visibilità:",
+//         error.message
+//       );
+//     } else {
+//       setData((prevData) =>
+//         prevData.map((item) =>
+//           item.id === id ? { ...item, visible: !currentVisibility } : item
+//         )
+//       );
+//     }
+//   };
+
+//   // Funzione per eliminare un piatto
+//   const deleteDish = async (id) => {
+//     const { error } = await supabase.from("Menu").delete().eq("id", id);
+
+//     if (error) {
+//       console.error("Errore nell'eliminazione del piatto:", error.message);
+//     } else {
+//       setData((prevData) => prevData.filter((item) => item.id !== id));
+//     }
+//   };
+
+//   // Funzione per creare un nuovo piatto
+//   const [show, setShow] = useState(false);
+
+//   const handleClose = () => setShow(false);
+//   const handleShow = () => setShow(true);
+
+//   return (
+//     <div>
+//       <h1 className="text-center">Menu</h1>
+//       <>
+//         <div className="text-end my-4">
+//           <Button variant="success" onClick={handleShow}>
+//             Crea nuovo elemento
+//           </Button>
+
+//           <Modal show={show} onHide={handleClose}>
+//             <Modal.Header closeButton>
+//               <Modal.Title>Crea nuovo elemento</Modal.Title>
+//             </Modal.Header>
+//             <Modal.Body>
+//               <CreateDishForm />
+//             </Modal.Body>
+//             <Modal.Footer>
+//               <Button onClick={handleClose}>Close</Button>
+//             </Modal.Footer>
+//           </Modal>
+//         </div>
+//       </>
+
+//       <div>
+//         {data
+//           .sort((a, b) => {
+//             const categoriesOrder = [
+//               "antipasti",
+//               "primi",
+//               "secondi",
+//               "contorni",
+//               "bevande",
+//               "dolci",
+//               "post",
+//               "vini",
+//             ];
+
+//             return (
+//               categoriesOrder.indexOf(a.category) -
+//               categoriesOrder.indexOf(b.category)
+//             );
+//           })
+//           .map((item) => (
+//             <EditableSingleDish
+//               key={item.id}
+//               item={item}
+//               toggleVisibility={toggleVisibility}
+//               deleteDish={deleteDish}
+//             />
+//           ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MenuEditable;
+
 import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
+import EditableSingleDish from "./EditableSingleDish";
+import { Button, Modal } from "react-bootstrap";
+import CreateDishForm from "./CreateDishForm";
+import CreateNewElement from "./CreateNewElement";
 
-const EditableMenu = () => {
-  const [menuItems, setMenuItems] = useState([]);
-  const [newItem, setNewItem] = useState({
-    name_ita: "",
-    price: "",
-    category: "",
-  });
-  const [editingId, setEditingId] = useState(null);
+const MenuEditable = () => {
+  const [data, setData] = useState([]);
 
-  const categoryOrder = [
-    "antipasti",
-    "primi",
-    "secondi",
-    "contorni",
-    "dolci",
-    "post", // amari e caffè
-    "bevande",
-    "vino",
-  ];
-  const toggleVisibility = (item) => {
-    supabase
-      .from("Menu")
-      .update({ visible: !item.visible })
-      .eq("id", item.id)
-      .then(({ error }) => {
-        if (error) console.error("Errore nel toggle:", error.message);
-        else fetchMenu();
-      });
-  };
   useEffect(() => {
-    fetchMenu();
-  }, []);
+    const fetchData = async () => {
+      const { data, error } = await supabase.from("Menu").select("*");
 
-  const fetchMenu = () => {
-    supabase
+      if (error) {
+        console.error("Errore nel caricamento del menu:", error.message);
+      } else {
+        setData(data);
+      }
+    };
+
+    fetchData();
+  }, [data]);
+
+  // Toggle visibilità
+  const toggleVisibility = async (id, currentVisibility) => {
+    const { error } = await supabase
       .from("Menu")
-      .select("*")
-      .then(({ data, error }) => {
-        if (error) console.error("Errore nel fetch:", error);
-        else setMenuItems(data);
-      });
+      .update({ visible: !currentVisibility })
+      .eq("id", id);
+
+    if (error) {
+      console.error(
+        "Errore nell'aggiornamento della visibilità:",
+        error.message
+      );
+    } else {
+      setData((prevData) =>
+        prevData.map((item) =>
+          item.id === id ? { ...item, visible: !currentVisibility } : item
+        )
+      );
+    }
   };
 
-  const addItem = () => {
-    if (!newItem.name_ita || !newItem.category) return;
+  // Eliminazione piatto
+  const deleteDish = async (id) => {
+    const { error } = await supabase.from("Menu").delete().eq("id", id);
 
-    supabase
-      .from("Menu")
-      .insert([newItem])
-      .then(({ error }) => {
-        if (error) console.error("Errore inserimento:", error);
-        else {
-          setNewItem({ name_ita: "", price: "", category: "" });
-          fetchMenu();
-        }
-      });
+    if (error) {
+      console.error("Errore nell'eliminazione del piatto:", error.message);
+    } else {
+      setData((prevData) => prevData.filter((item) => item.id !== id));
+    }
   };
 
-  const deleteItem = (id) => {
-    supabase
-      .from("Menu")
-      .delete()
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) console.error("Errore eliminazione:", error);
-        else fetchMenu();
-      });
-  };
+  // Funzione per ordinare i piatti
+  const sortedData = data.sort((a, b) => {
+    const categoriesOrder = [
+      "antipasti",
+      "primi",
+      "secondi",
+      "contorni",
+      "bevande",
+      "dolci",
+      "post",
+      "vini",
+    ];
 
-  const updateItem = (id, updatedItem) => {
-    supabase
-      .from("Menu")
-      .update(updatedItem)
-      .eq("id", id)
-      .then(({ error }) => {
-        if (error) console.error("Errore aggiornamento:", error);
-        else {
-          setEditingId(null);
-          fetchMenu();
-        }
-      });
-  };
-
-  const groupedItems = categoryOrder.reduce((acc, category) => {
-    acc[category] = menuItems.filter((item) => item.category === category);
-    return acc;
-  }, {});
+    return (
+      categoriesOrder.indexOf(a.category) - categoriesOrder.indexOf(b.category)
+    );
+  });
 
   return (
     <div>
-      <h2>Modifica Menu</h2>
+      <h1 className="text-center">Menu</h1>
+      <>
+        <div className="text-end my-4">
+          <CreateNewElement />
+        </div>
+      </>
 
-      {/* Aggiungi nuovo piatto */}
       <div>
-        <input
-          type="text"
-          placeholder="Nome piatto"
-          value={newItem.name_ita}
-          onChange={(e) => setNewItem({ ...newItem, name_ita: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Prezzo"
-          value={newItem.price}
-          onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Categoria"
-          value={newItem.category}
-          onChange={(e) =>
-            setNewItem({ ...newItem, category: e.target.value.toLowerCase() })
-          }
-        />
-        <button onClick={addItem}>Aggiungi</button>
+        {sortedData.map((item) => (
+          <EditableSingleDish
+            key={item.id}
+            item={item}
+            toggleVisibility={toggleVisibility}
+            deleteDish={deleteDish}
+          />
+        ))}
       </div>
-
-      {/* Sezioni per categoria */}
-      {categoryOrder.map((category) => {
-        const items = groupedItems[category];
-        if (!items || items.length === 0) return null;
-
-        const titolo = category.charAt(0).toUpperCase() + category.slice(1);
-
-        return (
-          <div key={category}>
-            <h3>{titolo}</h3>
-            <ul>
-              {items.map((item) => (
-                <li key={item.id}>
-                  {editingId === item.id ? (
-                    <>
-                      <input
-                        type="text"
-                        value={item.name_ita}
-                        onChange={(e) =>
-                          setMenuItems((prev) =>
-                            prev.map((el) =>
-                              el.id === item.id
-                                ? { ...el, name_ita: e.target.value }
-                                : el
-                            )
-                          )
-                        }
-                      />
-                      <input
-                        type="text"
-                        value={item.price}
-                        onChange={(e) =>
-                          setMenuItems((prev) =>
-                            prev.map((el) =>
-                              el.id === item.id
-                                ? { ...el, price: e.target.value }
-                                : el
-                            )
-                          )
-                        }
-                      />
-                      <button onClick={() => updateItem(item.id, item)}>
-                        Salva
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <span style={{ opacity: item.visible ? 1 : 0.5 }}>
-                        {item.name_ita} - €{item.price}
-                      </span>
-                      <button onClick={() => setEditingId(item.id)}>
-                        Modifica
-                      </button>
-                    </>
-                  )}
-                  <button onClick={() => toggleVisibility(item)}>
-                    {item.visible ? false : true}
-                  </button>
-                  <button onClick={() => deleteItem(item.id)}>Elimina</button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
     </div>
   );
 };
 
-export default EditableMenu;
+export default MenuEditable;

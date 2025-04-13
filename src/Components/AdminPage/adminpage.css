@@ -1,0 +1,15 @@
+.create-dish-form input,
+.create-dish-form select,
+.create-dish-form div {
+  border-radius: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 40%;
+  text-align: center;
+}
+.create-dish-form input::placeholder {
+  text-align: center;
+}
+.opacity50 {
+  opacity: 0.5;
+}
