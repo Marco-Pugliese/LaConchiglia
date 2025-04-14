@@ -4,6 +4,7 @@ import supabase from "../../supabaseClient";
 const CreateDishForm = () => {
   // eslint-disable-next-line no-unused-vars
   const [data, setData] = useState([]);
+  const [newError, setNewError] = useState(null);
   const [newDish, setNewDish] = useState({
     name_ita: "",
     name_eng: "",
@@ -15,8 +16,14 @@ const CreateDishForm = () => {
   });
   const createDish = async () => {
     const { error } = await supabase.from("Menu").insert([newDish]);
-
-    if (error) {
+    if (
+      newDish.name_ita === "" ||
+      newDish.name_eng === "" ||
+      newDish.price === ""
+    ) {
+      setNewError(true);
+      return;
+    } else if (error) {
       console.error("Errore nella creazione del piatto:", error.message);
     } else {
       setData((prevData) => [...prevData, newDish]);
@@ -29,22 +36,24 @@ const CreateDishForm = () => {
         category: "antipasti",
         visible: true,
       });
+      setNewError(false);
     }
   };
   return (
     <div className="create-dish-form my-4 d-flex flex-column align-items-center justify-content-around">
       <input
         type="text"
-        placeholder="Nome (ITA)"
+        placeholder="Nome (ITA) (*)"
         value={newDish.name_ita}
         onChange={(e) => setNewDish({ ...newDish, name_ita: e.target.value })}
       />
       <input
         type="text"
-        placeholder="Nome (ENG)"
+        placeholder="Nome (ENG) (*)"
         value={newDish.name_eng}
         onChange={(e) => setNewDish({ ...newDish, name_eng: e.target.value })}
       />
+
       <input
         type="text"
         placeholder="Descrizione (ITA)"
@@ -63,7 +72,7 @@ const CreateDishForm = () => {
       />
       <input
         type="number"
-        placeholder="Prezzo"
+        placeholder="Prezzo (*)"
         value={newDish.price}
         onChange={(e) => setNewDish({ ...newDish, price: e.target.value })}
       />
@@ -79,9 +88,27 @@ const CreateDishForm = () => {
         <option value="bevande">Bevande</option>
         <option value="vini">Vini</option>
       </select>
-      <div onClick={createDish} className="border border-black px-2 py-1">
+      <div
+        onClick={createDish}
+        className="aggiungiprodotto px-2 py-1 bg-primary text-light"
+      >
         Aggiungi Prodotto
       </div>
+      <div className="small text-danger">
+        <span className="small">
+          <strong className="fs-6">*</strong> Indica un campo obbligatorio
+        </span>
+      </div>
+      {newError && (
+        <div className="bg-danger text-light rounded-4 p-4 mt-4">
+          Compila tutti i campi contrassegnati dall' *
+        </div>
+      )}
+      {newError !== null && newError === false ? (
+        <div className="bg-success text-light rounded-4 p-4 mt-4">
+          Elemento creato correttamente
+        </div>
+      ) : null}
     </div>
   );
 };

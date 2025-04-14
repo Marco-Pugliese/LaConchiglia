@@ -1,7 +1,12 @@
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Modal, Row } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import ModifyElement from "./ModifyElement";
+import { useState } from "react";
 
 const EditableSingleDish = ({ item, toggleVisibility, deleteDish }) => {
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   return (
     <Container>
       <Row className="d-flex align-items-center justify-content-around">
@@ -29,14 +34,23 @@ const EditableSingleDish = ({ item, toggleVisibility, deleteDish }) => {
           <Button
             variant="outline-warning"
             className="mx-1"
-            onClick={() =>
-              alert("Modifica il piatto (funzione non implementata)")
-            }
+            onClick={handleShow}
           >
             Modifica
           </Button>
         </Col>
       </Row>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Modifica Elemento</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <ModifyElement item={item} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleClose}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

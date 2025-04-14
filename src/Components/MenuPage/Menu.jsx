@@ -28,8 +28,8 @@ const Menu = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Data from Supabase</h1>
+    <div className="text-center">
+      <h1 className="mb-4 py-5">Menu</h1>
       {data.map((item, index) => {
         return <SingleDish key={index} item={item} />;
       })}

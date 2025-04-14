@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Header from "./Components/Header/Header";
 import LandingPage from "./Components/LandingPage/LandingPage";
-import Menu from "./Components/MenuPage/menu";
+import Menu from "./Components/MenuPage/Menu";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import AdminPage from "./Components/AdminPage/AdminPage";

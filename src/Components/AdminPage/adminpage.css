@@ -1,14 +1,55 @@
 .create-dish-form input,
 .create-dish-form select,
-.create-dish-form div {
+.create-dish-form .aggiungiprodotto {
   border-radius: 20px;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  width: 40%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
   text-align: center;
+  border-width: 0.5px;
+  border-color: black;
+  transition: all 0.8s;
+  box-shadow: 0 0 10px 1px rgb(200, 200, 200);
 }
-.create-dish-form input::placeholder {
+.create-dish-form input::placeholder,
+.create-dish-form select {
+  text-align: start;
+  padding-left: 20px;
+}
+.create-dish-form input:hover,
+.create-dish-form select:hover,
+.aggiungiprodotto {
+  cursor: pointer;
+  box-shadow: 0 0 10px 1px rgb(150, 150, 150);
+  scale: 1.03;
+}
+.opacity50 {
+  opacity: 0.5;
+}
+.modify-dish-form input,
+.modify-dish-form select,
+.modify-dish-form .modificaprodotto {
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
   text-align: center;
+  border-width: 0.5px;
+  border-color: black;
+  transition: all 0.8s;
+  box-shadow: 0 0 10px 1px rgb(200, 200, 200);
+}
+.modify-dish-form input::placeholder,
+.modify-dish-form select {
+  text-align: start;
+  padding-left: 20px;
+}
+.modify-dish-form input:hover,
+.modify-dish-form select:hover,
+.modificaprodotto {
+  cursor: pointer;
+  box-shadow: 0 0 10px 1px rgb(150, 150, 150);
+  scale: 1.03;
 }
 .opacity50 {
   opacity: 0.5;
